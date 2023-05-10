@@ -14,9 +14,9 @@ Brain MRI segmentation
 https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation
 </pre>
 <p>
-About Dataset
-LGG Segmentation Dataset
-Dataset used in:
+About Dataset<br>
+LGG Segmentation Dataset<br>
+Dataset used in:<br>
 
 Mateusz Buda, AshirbaniSaha, Maciej A. Mazurowski "Association of genomic subtypes of 
 lower-grade gliomas with shape features automatically extracted by a deep learning 
@@ -183,6 +183,22 @@ Please run the following command for Python script <a href="./TensorflowUNetBrai
 Some green tumor regions in the original images of the mini_test dataset above have been detected as shown below.
 <img src="./asset/mini_test_output.png" width="1024" height="auto"><br><br>
 
+<br>
+<h3>
+References
+</h3>
+<b>1. Brain MRI segmentation</b><br>
+<pre>
+https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation
+</pre>
+<b>2. Brain tumor segmentation based on deep learning and an attention mechanism using MRI multi-modalities brain images</b><br>
+Ramin Ranjbarzadeh, Abbas Bagherian Kasgari, Saeid Jafarzadeh Ghoushchi, <br>
+Shokofeh Anari, Maryam Naseri & Malika Bendechache <br>
+<pre>
+https://www.nature.com/articles/s41598-021-90428-8
+</pre>
+
+
 <h2>
 Appendix
 </h2>
@@ -345,5 +361,6 @@ ________________________________________________________________________________
 
 ==================================================================================================
 </pre>
+
 
 
