@@ -1,7 +1,6 @@
-absl-py==0.15.0
+absl-py>=1.0.0
 appdirs==1.4.4
 astunparse==1.6.3
-beautifulsoup4==4.11.1
 bs4==0.0.1
 cachetools==5.2.0
 certifi==2022.12.07
@@ -22,7 +21,7 @@ gast==0.4.0
 google-auth==2.7.0
 google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
-googleapis-common-protos==1.56.4
+#googleapis-common-protos==1.56.4
 graphviz==0.20.1
 grpcio==1.46.3
 h5py==3.7.0
@@ -31,7 +30,7 @@ imageio==2.28.1
 importlib-metadata==4.11.4
 importlib-resources==5.8.0
 joblib==1.1.1
-keras==2.8.0
+#keras==2.8.0
 Keras-Preprocessing==1.1.2
 kiwisolver==1.4.2
 lazy_loader==0.2
@@ -51,7 +50,7 @@ pandas==1.4.3
 parse==1.19.0
 Pillow==9.3.0
 promise==2.3
-protobuf==3.20.2
+protobuf>=3.19
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycocotools==2.0
@@ -76,14 +75,14 @@ six==1.16.0
 sklearn==0.0
 soupsieve==2.3.2.post1
 split-folders==0.5.1
-tensorboard==2.8.0
+#tensorboard==2.10.1
 tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.1
-tensorflow==2.11.1
+tensorflow==2.10.1
 tensorflow-addons==0.17.0
 tensorflow-datasets==4.6.0
 tensorflow-determinism==0.3.0
-tensorflow-estimator==2.8.0
+tensorflow-estimator==2.10.0
 tensorflow-hub==0.12.0
 tensorflow-io-gcs-filesystem==0.23.1
 tensorflow-metadata==1.9.0

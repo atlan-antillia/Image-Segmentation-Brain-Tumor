@@ -50,6 +50,7 @@ import traceback
 import numpy as np
 import cv2
 import tensorflow as tf
+
 from tensorflow.keras.layers import Lambda
 from tensorflow.keras.layers import Input
 
@@ -116,7 +117,6 @@ class TensorflowUNet:
     except:
       pass
     
-
     self.model.compile(optimizer = self.optimizer, loss= self.loss, metrics = self.metrics)
    
     show_summary = self.config.get(MODEL, "show_summary")

@@ -138,8 +138,8 @@ output_dir    = "./mini_test_output"
 We have also used Python <a href="./BrainTumorDataset.py">BrainTumorDataset.py</a> script to create
 train and test dataset from the original and segmented images specified by
 <b>image_datapath</b> and <b>mask_datapath </b> parameters in the configratration file.<br>
-The training process has just been stopped at epoch 29 by an early-stopping callback as shown below.<br><br>
-<img src="./asset/train_console_at_epoch_29.png" width="720" height="auto"><br>
+The training process has just been stopped at epoch 30 by an early-stopping callback as shown below.<br><br>
+<img src="./asset/train_console_at_epoch_30.png" width="720" height="auto"><br>
 <br>
 Since <b>dice_loss</b> is set to be <b>False</b> in <b>train_eval_infer.config</b> file,
 <b>binary_crossentropy</b> is used as a loss function to compile our model as shown below.
@@ -150,12 +150,12 @@ Since <b>dice_loss</b> is set to be <b>False</b> in <b>train_eval_infer.config</
 </pre>
 The <b>val_accuracy</b> is very high as shown below from the beginning of the training.<br>
 <b>Train accuracies line graph</b>:<br>
-<img src="./asset/train_accuracies_29.png" width="720" height="auto"><br>
+<img src="./asset/train_accuracies_30.png" width="720" height="auto"><br>
 
 <br>
 The val_loss is also very low as shown below from the beginning of the training.<br>
 <b>Train losses line graph</b>:<br>
-<img src="./asset/train_losses_29.png" width="720" height="auto"><br>
+<img src="./asset/train_losses_30.png" width="720" height="auto"><br>
 
 
 <h2>
@@ -169,7 +169,7 @@ in the following way.<br>
 >python TensorflowUNetBrainTumorEvaluator.py
 </pre>
 The evaluation result of this time is the following.<br>
-<img src="./asset/evaluate_console_at_epoch_29.png" width="720" height="auto"><br>
+<img src="./asset/evaluate_console_at_epoch_30.png" width="720" height="auto"><br>
 <br>
 
 
