@@ -103,8 +103,8 @@ Please run the following command.<br>
 
 <pre>
 ; train_eval_infer.config
-; 2023/5/10 antillia.com
-
+; 2023/5/11 antillia.com
+; Added dice_loss
 [model]
 image_width    = 256
 image_height   = 256
@@ -114,7 +114,8 @@ base_filters   = 16
 num_layers     = 6
 dropout_rate   = 0.08
 learning_rate  = 0.001
-show_summary   = True
+dice_loss      = False
+show_summary   = False
 
 [train]
 epochs        = 100
@@ -123,19 +124,16 @@ patience      = 10
 model_dir     = "./models"
 eval_dir      = "./eval"
 
-image_datapath = "./BrainTumor/train/original/"
-mask_datapath  = "./BrainTumor/train/segmented/"
-category       = "Early"
+image_datapath = "./BrainTumor/train/image/"
+mask_datapath  = "./BrainTumor/train/mask/"
 
 [eval]
-image_datapath = "./BrainTumor/test/original/"
-mask_datapath  = "./BrainTumor/test/segmented/"
-category       = "Early"
+image_datapath = "./BrainTumor/test/image/"
+mask_datapath  = "./BrainTumor/test/mask/"
 
 [infer] 
 images_dir    = "./mini_test" 
 output_dir    = "./mini_test_output"
-
 </pre>
 We have also used Python <a href="./BrainTumorDataset.py">BrainTumorDataset.py</a> script to create
 train and test dataset from the original and segmented images specified by
@@ -143,10 +141,19 @@ train and test dataset from the original and segmented images specified by
 The training process has just been stopped at epoch 29 by an early-stopping callback as shown below.<br><br>
 <img src="./asset/train_console_at_epoch_29.png" width="720" height="auto"><br>
 <br>
+Since <b>dice_loss</b> is set to be <b>False</b> in <b>train_eval_infer.config</b> file,
+<b>binary_crossentropy</b> is used as a loss function to compile our model as shown below.
+<pre>
+  self.loss    = "binary_crossentropy"
+  self.metrics = ["accuracy"]
+  self.model.compile(optimizer = self.optimizer, loss= self.loss, metrics = self.metrics)
+</pre>
+The <b>val_accuracy</b> is very high as shown below from the beginning of the training.<br>
 <b>Train accuracies line graph</b>:<br>
 <img src="./asset/train_accuracies_29.png" width="720" height="auto"><br>
 
 <br>
+The val_loss is also very low as shown below from the beginning of the training.<br>
 <b>Train losses line graph</b>:<br>
 <img src="./asset/train_losses_29.png" width="720" height="auto"><br>
 
