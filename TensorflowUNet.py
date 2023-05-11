@@ -68,11 +68,13 @@ from ConfigParser import ConfigParser
 
 from EpochChangeCallback import EpochChangeCallback
 from GrayScaleImageWriter import GrayScaleImageWriter
+from losses import dice_loss, bce_dice_loss
 
 import random
 seed           = 137
 random.seed    = seed
 np.random.seed = seed
+tf.random.set_seed(seed)
 
 MODEL  = "model"
 TRAIN  = "train"
@@ -99,12 +101,23 @@ class TensorflowUNet:
     self.optimizer = Adam(learning_rate = learning_rate, 
          beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, 
          amsgrad=False)
-    #self.loss = "binary_crossentropy"
-   
+    
     self.model_loaded = False
 
+    #
+    # 
+    self.loss    = "binary_crossentropy"
     self.metrics = ["accuracy"]
-    self.model.compile(optimizer = self.optimizer, loss= "binary_crossentropy", metrics = self.metrics)
+    try:
+      dice_loss  = self.config.get(MODEL, "dice_loss")
+      if dice_loss:
+        self.loss    = bce_dice_loss
+        self.metrics = [dice_loss]
+    except:
+      pass
+    
+
+    self.model.compile(optimizer = self.optimizer, loss= self.loss, metrics = self.metrics)
    
     show_summary = self.config.get(MODEL, "show_summary")
     if show_summary:

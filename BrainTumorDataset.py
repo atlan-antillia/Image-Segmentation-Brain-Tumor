@@ -37,8 +37,12 @@ class BrainTumorDataset:
 
 
   def create(self, original_data_path, segmented_data_path):
-    image_files = glob.glob(original_data_path  + "/*.tif")
-    mask_files  = glob.glob(segmented_data_path + "/*.tif")
+    # 2023/05/11 Modified to use sorted
+    #image_files = glob.glob(original_data_path  + "/*.tif")
+    #mask_files  = glob.glob(segmented_data_path + "/*.tif")
+    image_files = sorted(glob.glob(original_data_path  + "/*.tif"))
+    mask_files  = sorted(glob.glob(segmented_data_path + "/*.tif"))
+    
     if len(image_files) != len(mask_files):
       raise Exception("The number of the original and segmented image files is not matched")
     num_images  = len(image_files)

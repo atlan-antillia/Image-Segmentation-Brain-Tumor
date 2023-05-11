@@ -1,7 +1,7 @@
 # Antillia.com Toshiyuki Arai
-# 2023/05/10
+# 2023/05/11
 
-# loss_function.py
+# losses.py
 #
 # These functions have been taken from the following web site.
 #
@@ -11,23 +11,24 @@
 
 import tensorflow as tf
 import tensorflow.keras.backend as K
-
-
-def dice_coef(y_true, y_pred, smooth=1):
-  y_true_f = K.flatten(y_true)
-  y_pred_f = K.flatten(y_pred)
-  # 2023/05/10 Added casting to 'float32'
-  y_true_f = K.cast(y_true_f, 'float32')
-  y_pred_f = K.cast(y_pred_f, 'float32')
-  intersection = K.sum(y_true_f * y_pred_f, axis=[1,2,3])
-  union = K.sum(y_true_f, axis=[1,2,3]) + K.sum(y_pred_f, axis=[1,2,3])
-  dice  = K.mean((2. * intersection + smooth)/(union + smooth), axis=0)
-  return dice
+from tensorflow.keras import losses
 
 def dice_loss(y_true, y_pred):
-    loss = 1 - dice_coef(y_true, y_pred)
-    return loss
+    smooth = 1.
 
+    y_true_f = tf.reshape(y_true, [-1])
+    y_pred_f = tf.reshape(y_pred, [-1])
+    y_true_f = K.cast(y_true_f, 'float32')
+    y_pred_f = K.cast(y_pred_f, 'float32')
+
+    intersection = tf.reduce_sum(y_true_f * y_pred_f)
+    score = (2.0 * intersection + smooth) / (tf.reduce_sum(y_true_f) + tf.reduce_sum(y_pred_f) + smooth)
+    return 1.0 - score
+
+def bce_dice_loss(y_true, y_pred):
+    loss = 0.5 * losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
+    return loss
+ 
 def jacard_similarity(y_true, y_pred):
     """
     Intersection-Over-Union (IoU), also known as the Jaccard Index
