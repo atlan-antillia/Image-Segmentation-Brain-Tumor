@@ -140,12 +140,6 @@ mask_datapath  = "./BrainTumor/test/mask/"
 images_dir    = "./mini_test" 
 output_dir    = "./mini_test_output"
 </pre>
-We have also used Python <a href="./BrainTumorDataset.py">BrainTumorDataset.py</a> script to create
-train and test dataset from the original and segmented images specified by
-<b>image_datapath</b> and <b>mask_datapath </b> parameters in the configratration file.<br>
-The training process has just been stopped at epoch 30 by an early-stopping callback as shown below.<br><br>
-<img src="./asset/train_console_at_epoch_30.png" width="720" height="auto"><br>
-<br>
 Since <b>dice_loss</b> is set to be <b>False</b> in <b>train_eval_infer.config</b> file,
 <b>binary_crossentropy</b> is used as a loss function to compile our model as shown below.
 <pre>
@@ -153,6 +147,13 @@ Since <b>dice_loss</b> is set to be <b>False</b> in <b>train_eval_infer.config</
   self.metrics = ["accuracy"]
   self.model.compile(optimizer = self.optimizer, loss= self.loss, metrics = self.metrics)
 </pre>
+
+We have also used Python <a href="./BrainTumorDataset.py">BrainTumorDataset.py</a> script to create
+train and test dataset from the original and segmented images specified by
+<b>image_datapath</b> and <b>mask_datapath </b> parameters in the configratration file.<br>
+The training process has just been stopped at epoch 30 by an early-stopping callback as shown below.<br><br>
+<img src="./asset/train_console_at_epoch_30.png" width="720" height="auto"><br>
+<br>
 The <b>val_accuracy</b> is very high as shown below from the beginning of the training.<br>
 <b>Train accuracies line graph</b>:<br>
 <img src="./asset/train_accuracies_30.png" width="720" height="auto"><br>
