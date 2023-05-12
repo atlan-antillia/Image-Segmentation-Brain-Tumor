@@ -1,5 +1,5 @@
 # Antillia.com Toshiyuki Arai
-# 2023/05/11
+# 2023/05/12
 
 # losses.py
 #
@@ -10,13 +10,13 @@
 #   MIT license
 
 """
-Orignal usage example taken from the website above:
+Orignal usage example taken from the website above is the follwing:
 model.compile(optimizer=Adam(lr=1e-3),
               loss=semantic_loss.unet3p_hybrid_loss,
               metrics=[semantic_loss.dice_coef, semantic_loss.sensitivity, semantic_loss.specificity])
 
               
-We use the following simplified version
+We use the following simplified version.
 -->
 model.compile(optimizer = Adam(lr=1e-3),
               loss      = basnet_hybrid_loss,
