@@ -44,7 +44,7 @@ U-Net: Convolutional Networks for Biomedical Image Segmentation
  https://arxiv.org/pdf/1505.04597.pdf
 </pre>
 <ul>
-    <li>2023/05/12: Modified TensorflowUNetModel to be compiled by dice_loss function. </li>
+    <li>2023/05/12: Modified TensorflowUNetModel to be compiled with dice_loss function. </li>
     <li>2023/05/12: Trained, evaluated and inferred Brain-Tumor-TensorflowUNet-Model with dice_loss. </li>
 
 </ul>
@@ -269,7 +269,7 @@ the following loss and metrics are used to compile our model as shown below.
 
 
 <h2>
-4 Evaluation
+7 Evaluation by TensorflowUNet Model with dice_loss
 </h2>
  We have evaluated prediction accuracy of our Pretrained Brain-Tumor Model by using <b>test</b> dataset.<br>
 Please run the following bat file.<br>
@@ -286,7 +286,7 @@ The evaluation result of this time is the following.<br>
 
 
 <h2>
-5 Inference 
+8 Inference by TensorflowUNet Model with dice_loss
 </h2>
 We have also tried to infer the segmented region for <b>mini_test</b> dataset, which is the same mini_test dataset used in the case of <b>dice_loss=False</b>.<br>
 Please run the following bat file.<br>
