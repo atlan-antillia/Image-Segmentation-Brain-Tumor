@@ -216,7 +216,6 @@ python ./TensorflowUNetBrainTumorTrainer.py ./train_eval_infer_dice_loss.config
 <pre>
 ; train_eval_infer_dice_losss.config
 ; 2023/5/12 antillia.com
-
 [model]
 image_width    = 256
 image_height   = 256
@@ -236,7 +235,6 @@ patience      = 10
 metrics       = ["dice_coef", "val_dice_coef"]
 model_dir     = "./dice_loss_models"
 eval_dir      = "./dice_loss_eval"
-
 image_datapath = "./BrainTumor/train/image/"
 mask_datapath  = "./BrainTumor/train/mask/"
 
@@ -247,11 +245,8 @@ mask_datapath  = "./BrainTumor/test/mask/"
 [infer] 
 images_dir    = "./mini_test" 
 output_dir    = "./mini_test_output_dice_loss"
-
 </pre>
-The training process has just been stopped at epoch 41 by an early-stopping callback as shown below.<br><br>
-<img src="./asset/train_dice_loss_console_at_epoch_41.png" width="720" height="auto"><br>
-<br>
+
 Since <b>dice_loss</b> is set to be <b>True</b> in <b>train_eval_infer_dice_loss.config</b> file,
 the following loss and metrics are used to compile our model as shown below.
 <pre>
@@ -260,6 +255,9 @@ the following loss and metrics are used to compile our model as shown below.
   self.model.compile(optimizer = self.optimizer, loss= self.loss, metrics = self.metrics)
 </pre>
 
+The training process has just been stopped at epoch 41 by an early-stopping callback as shown below.<br><br>
+<img src="./asset/train_dice_loss_console_at_epoch_41.png" width="720" height="auto"><br>
+<br>
 <b>Train metrics(dice_coef) line graph</b>:<br>
 <img src="./asset/train_dice_loss_metrics_41.png" width="720" height="auto"><br>
 
