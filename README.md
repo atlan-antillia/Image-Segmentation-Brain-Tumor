@@ -46,7 +46,6 @@ U-Net: Convolutional Networks for Biomedical Image Segmentation
 <ul>
     <li>2023/05/12: Modified TensorflowUNetModel to be compiled with dice_loss function. </li>
     <li>2023/05/12: Trained, evaluated and inferred Brain-Tumor-TensorflowUNet-Model with dice_loss. </li>
-
 </ul>
 
 <br>
@@ -101,7 +100,11 @@ BrainTumor
 </h2>
  We have trained Brain-Tumor TensorflowUNet Model by using the following
  <b>train_eval_infer.config</b> file. <br>
-Please run the following command.<br>
+Please run the following bat file.<br>
+<pre>
+>1.train.bat
+</pre>
+, which simply runs the following command.<br>
 <pre>
 >python TensorflowUNetBrainTumorTrainer.py
 </pre>
@@ -168,9 +171,11 @@ The val_loss is also very low as shown below from the beginning of the training.
 4 Evaluation
 </h2>
  We have evaluated prediction accuracy of our Pretrained Brain-Tumor Model by using <b>test</b> dataset.
-
-Please run the Python script <a href="./TensorflowUNetBrainTumorEvaluator.py">TensorflowUNetBrainTumorEvaluator.py</a> 
-in the following way.<br>
+Please run the following bat file.<br>
+<pre>
+>2.evalute.bat
+</pre>
+, which simply run the following command.<br>
 <pre>
 >python TensorflowUNetBrainTumorEvaluator.py
 </pre>
@@ -178,13 +183,15 @@ The evaluation result of this time is the following.<br>
 <img src="./asset/evaluate_console_at_epoch_30.png" width="720" height="auto"><br>
 <br>
 
-
 <h2>
 5 Inference 
 </h2>
 We have also tried to infer the segmented region for <b>mini_test</b> dataset, which is a very small dataset including only ten images extracted from <b>test</b> dataset,
  by using our Pretrained Brain-Tumor Model.<br>
-Please run the following command for Python script <a href="./TensorflowUNetBrainTumorInfer.py">TensorflowUNetBrainTumorInfer.py</a>.<br>
+<pre>
+>3.infer.bat
+</pre>
+, which simply runs the following command.<br>
 <pre>
 >python TensorflowUNetBrainTumorInfer.py
 </pre>
@@ -204,6 +211,11 @@ Some green tumor regions in the original images of the mini_test dataset above h
 <h2>
 6 Train TensorflowUNet Model with dice_loss
 </h2>
+We have updated the functions to compute losses in <a href="./losses.py">losses.py</a>, based on 
+class <b>Semantic_loss_functions</b> in the web site <a href="https://github.com/shruti-jadon/Semantic-Segmentation-Loss-Functions">
+Semantic-Segmentation-Loss-Functions (SemSegLoss)
+</a>
+
  We have trained Brain-Tumor TensorflowUNet Model by using the following
  <b>train_eval_infer_dice_loss.config</b> file. <br>
 Please run the following bat file.<br>
@@ -325,6 +337,46 @@ Qianni Zhang, Xiangrong Zhang, Yaochu Jin & Huiyu Zhou
 <pre>
 https://link.springer.com/article/10.1007/s40747-022-00815-5
 </pre>
+
+<b>4. Semantic-Segmentation-Loss-Functions (SemSegLoss)</b><br>
+<pre>
+https://github.com/shruti-jadon/Semantic-Segmentation-Loss-Functions
+</pre>
+<pre>
+Citation
+@inproceedings{jadon2020survey,
+  title={A survey of loss functions for semantic segmentation},
+  author={Jadon, Shruti},
+  booktitle={2020 IEEE Conference on Computational Intelligence in Bioinformatics and Computational Biology (CIBCB)},
+  pages={1--7},
+  year={2020},
+  organization={IEEE}
+}
+@article{JADON2021100078,
+title = {SemSegLoss: A python package of loss functions for semantic segmentation},
+journal = {Software Impacts},
+volume = {9},
+pages = {100078},
+year = {2021},
+issn = {2665-9638},
+doi = {https://doi.org/10.1016/j.simpa.2021.100078},
+url = {https://www.sciencedirect.com/science/article/pii/S2665963821000269},
+author = {Shruti Jadon},
+keywords = {Deep Learning, Image segmentation, Medical imaging, Loss functions},
+abstract = {Image Segmentation has been an active field of research as it has a wide range of applications, 
+ranging from automated disease detection to self-driving cars. In recent years, various research papers 
+proposed different loss functions used in case of biased data, sparse segmentation, and unbalanced dataset. 
+In this paper, we introduce SemSegLoss, a python package consisting of some of the well-known loss functions 
+widely used for image segmentation. It is developed with the intent to help researchers in the development 
+of novel loss functions and perform an extensive set of experiments on model architectures for various 
+applications. The ease-of-use and flexibility of the presented package have allowed reducing the development 
+time and increased evaluation strategies of machine learning models for semantic segmentation. Furthermore, 
+different applications that use image segmentation can use SemSegLoss because of the generality of its 
+functions. This wide range of applications will lead to the development and growth of AI across all industries.
+}
+}
+</pre>
+<br>
 
 <h2>
 Appendix
