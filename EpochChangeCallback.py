@@ -29,15 +29,17 @@ class EpochChangeCallback(tf.keras.callbacks.Callback):
 
   ##
   # Constructor
-  def __init__(self, eval_dir):
+
+  def __init__(self, eval_dir, metrics=["accuracy", "val_accuracy"]):
     self.eval_dir = eval_dir
+    self.metrics  = metrics
     if os.path.exists(self.eval_dir):
       shutil.rmtree(self.eval_dir)
 
     if not os.path.exists(self.eval_dir):
       os.makedirs(self.eval_dir)
     self.train_losses_file     = os.path.join(self.eval_dir, "train_losses.csv")  
-    self.train_accuracies_file = os.path.join(self.eval_dir, "train_accuracies.csv")  
+    self.train_accuracies_file = os.path.join(self.eval_dir, "train_metrics.csv")  
     try:
       if not os.path.exists(self.train_losses_file):
         with open(self.train_losses_file, "w") as f:
@@ -49,7 +51,7 @@ class EpochChangeCallback(tf.keras.callbacks.Callback):
     try:
       if not os.path.exists(self.train_accuracies_file):
         with open(self.train_accuracies_file, "w") as f:
-          header = "epoch, accuracy, val_accuracy\n"
+          header = "epoch," + metrics[0] + "," + metrics[1] + "," + "\n"
           f.write(header)
     except Exception as ex:
         traceback.print_exc()
@@ -59,14 +61,16 @@ class EpochChangeCallback(tf.keras.callbacks.Callback):
     #print("\n   on_epoch_end :epoch:{}".format(epoch))
     
     acc     = 0
-    if 'accuracy' in logs:
-      acc      = logs.get('accuracy')
+    metric = self.metrics[0]
+    if metric in logs:
+      acc      = logs.get(metric)
     elif 'acc' in logs:
       acc      = logs.get('acc')
-
+    
     val_acc = 0
-    if 'val_accuracy' in logs:
-      val_acc  = logs.get('val_accuracy')
+    metric = self.metrics[1]
+    if metric in logs:
+      val_acc  = logs.get(metric)
     elif 'val_acc' in logs:
       val_acc  = logs.get('val_acc')
 

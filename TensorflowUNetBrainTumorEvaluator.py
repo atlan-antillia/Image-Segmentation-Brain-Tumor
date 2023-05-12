@@ -18,7 +18,7 @@
 
 
 import os
-import shutil
+import sys
 
 os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 os.environ["TF_ENABLE_GPU_GARBAGE_COLLECTION"]="false"
@@ -39,6 +39,14 @@ EVAL   = "eval"
 if __name__ == "__main__":
   try:
     config_file    = "./train_eval_infer.config"
+    # You can specify config_file on your command line parammeter.
+    if len(sys.argv) == 2:
+      cfile = sys.argv[1]
+      if not os.path.exists(cfile):
+         raise Exception("Not found " + cfile)
+      else:
+        config_file = cfile
+
     config     = ConfigParser(config_file)
 
     width      = config.get(MODEL, "image_width")

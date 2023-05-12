@@ -38,6 +38,7 @@ learning_rate  = 0.001
 """
 
 import os
+import sys
 
 os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 os.environ["TF_ENABLE_GPU_GARBAGE_COLLECTION"]="false"
@@ -69,7 +70,9 @@ from ConfigParser import ConfigParser
 
 from EpochChangeCallback import EpochChangeCallback
 from GrayScaleImageWriter import GrayScaleImageWriter
-from losses import dice_loss, bce_dice_loss
+
+from losses import dice_coef, basnet_hybrid_loss, sensitivity, specificity
+
 
 import random
 seed           = 137
@@ -112,8 +115,9 @@ class TensorflowUNet:
     try:
       dice_loss  = self.config.get(MODEL, "dice_loss")
       if dice_loss:
-        self.loss    = bce_dice_loss
-        self.metrics = [dice_loss]
+        self.loss    = basnet_hybrid_loss
+        self.metrics = [dice_coef, sensitivity, specificity]
+        #self.metrics = [dice_coef]
     except:
       pass
     
@@ -178,7 +182,11 @@ class TensorflowUNet:
     patience   = self.config.get(TRAIN, "patience")
     eval_dir   = self.config.get(TRAIN, "eval_dir")
     model_dir  = self.config.get(TRAIN, "model_dir")
-
+    metrics    = ["accuracy", "val_accuracy"]
+    try:
+      metrics    = self.config.get(TRAIN, "metrics")
+    except:
+      pass
     if os.path.exists(model_dir):
       shutil.rmtree(model_dir)
 
@@ -188,7 +196,7 @@ class TensorflowUNet:
 
     early_stopping = EarlyStopping(patience=patience, verbose=1)
     check_point    = ModelCheckpoint(weight_filepath, verbose=1, save_best_only=True)
-    epoch_change   = EpochChangeCallback(eval_dir)
+    epoch_change   = EpochChangeCallback(eval_dir, metrics)
 
     results = self.model.fit(x_train, y_train, 
                     validation_split=0.2, batch_size=batch_size, epochs=epochs, 
@@ -260,8 +268,17 @@ class TensorflowUNet:
      
     
 if __name__ == "__main__":
+
   try:
     config_file    = "./train_eval_infer.config"
+    # You can specify config_file on your command line parammeter.
+    if len(sys.argv) == 2:
+      cfile = sys.argv[1]
+      if not os.path.exists(cfile):
+         raise Exception("Not found " + cfile)
+      else:
+        config_file = cfile
+
     config   = ConfigParser(config_file)
 
     width    = config.get(MODEL, "image_width")
