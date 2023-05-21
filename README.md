@@ -372,7 +372,13 @@ Qianni Zhang, Xiangrong Zhang, Yaochu Jin & Huiyu Zhou
 https://link.springer.com/article/10.1007/s40747-022-00815-5
 </pre>
 
-<b>4. Semantic-Segmentation-Loss-Functions (SemSegLoss)</b><br>
+<b>4. EfficientDet-MRI-Brain-Tumor</b><br>
+Toshiyuki Arai @antillia.com<br>
+<pre>
+https://github.com/sarah-antillia/EfficientDet-MRI-Brain-Tumor
+</pre>
+
+<b>5. Semantic-Segmentation-Loss-Functions (SemSegLoss)</b><br>
 <pre>
 https://github.com/shruti-jadon/Semantic-Segmentation-Loss-Functions
 </pre>
