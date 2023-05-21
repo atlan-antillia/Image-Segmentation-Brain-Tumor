@@ -1,4 +1,4 @@
-# Image-Segmentation-Brain-Tumor (Updated: 2023/05/12)
+# Image-Segmentation-Brain-Tumor (Updated: 2023/05/21)
 <h2>
 1 Image-Segmentation-Brain-Tumor
 </h2>
@@ -44,8 +44,10 @@ U-Net: Convolutional Networks for Biomedical Image Segmentation
  https://arxiv.org/pdf/1505.04597.pdf
 </pre>
 <ul>
-    <li>2023/05/12: Modified TensorflowUNetModel to be compiled with dice_loss function. </li>
-    <li>2023/05/12: Trained, evaluated and inferred Brain-Tumor-TensorflowUNet-Model with dice_loss. </li>
+    <li>2023/05/12: Modified TensorflowUNetModel to be compiled with basnet_hybrid_loss function. </li>
+    <li>2023/05/12: Trained, evaluated and inferred Brain-Tumor-TensorflowUNet-Model with basnet_hybrid_loss. </li>
+    <li>2023/05/21: Modified to read and eval <b>loss</b> and <b>metrics</b> functions from a configuration file. 
+</li>
 </ul>
 
 <br>
@@ -111,8 +113,14 @@ Please run the following bat file.<br>
 
 <pre>
 ; train_eval_infer.config
-; 2023/5/11 antillia.com
-; Added dice_loss
+; 2023/5/20 antillia.com
+; Modified to use loss and metric
+; Specify loss as a function nams
+; loss =  "binary_crossentropy"
+; Specify metrics as a list of function name
+; metrics = ["binary_accuracy"]
+; Please see: https://www.tensorflow.org/api_docs/python/tf/keras/Model?version=stable#compile
+
 [model]
 image_width    = 256
 image_height   = 256
@@ -122,13 +130,17 @@ base_filters   = 16
 num_layers     = 6
 dropout_rate   = 0.08
 learning_rate  = 0.001
-dice_loss      = False
+
+loss           = "binary_crossentropy"
+metrics        = ["binary_accuracy"]
 show_summary   = False
 
 [train]
 epochs        = 100
 batch_size    = 4
 patience      = 10
+metrics       = ["binary_accuracy", "val_binary_accuracy"]
+
 model_dir     = "./models"
 eval_dir      = "./eval"
 
@@ -143,28 +155,47 @@ mask_datapath  = "./BrainTumor/test/mask/"
 images_dir    = "./mini_test" 
 output_dir    = "./mini_test_output"
 </pre>
-Since <b>dice_loss</b> is set to be <b>False</b> in <b>train_eval_infer.config</b> file,
-<b>binary_crossentropy</b> is used as a loss function to compile our model as shown below.
+
+Since <pre>loss = "binary_crossentropy"</pre> and <pre>metrics = ["binary_accuracy"] </pre> are specified 
+in <b>train_eval_infer.config</b> file,
+<b>binary_crossentropy</b> and <b>binary_accuracy</b> functions are used to compile our model as shown below.
 <pre>
-  self.loss    = "binary_crossentropy"
-  self.metrics = ["accuracy"]
-  self.model.compile(optimizer = self.optimizer, loss= self.loss, metrics = self.metrics)
+    # Read a loss function name from a config file, and eval it.
+    # loss = "binary_crossentropy"
+    self.loss  = eval(self.config.get(MODEL, "loss"))
+
+    # Read a list of metrics function names from a config file, and eval each of the list,
+    # metrics = ["binary_accuracy"]
+    metrics  = self.config.get(MODEL, "metrics")
+    self.metrics = []
+    for metric in metrics:
+      self.metrics.append(eval(metric))
+        
+    self.model.compile(optimizer = self.optimizer, loss= self.loss, metrics = self.metrics)
 </pre>
+You can also specify other loss and metrics functions in the config file.<br>
+Example: basnet_hybrid_loss(https://arxiv.org/pdf/2101.04704.pdf)<br>
+<pre>
+loss         = "basnet_hybrid_loss"
+metrics      = ["dice_coef", "sensitivity", "specificity"]
+</pre>
+On detail of these functions, please refer to <a href="./losses.py">losses.py</a><br>, and 
+<a href="https://github.com/shruti-jadon/Semantic-Segmentation-Loss-Functions/tree/master">Semantic-Segmentation-Loss-Functions (SemSegLoss)</a>.
 
 We have also used Python <a href="./BrainTumorDataset.py">BrainTumorDataset.py</a> script to create
 train and test dataset from the original and segmented images specified by
 <b>image_datapath</b> and <b>mask_datapath </b> parameters in the configratration file.<br>
-The training process has just been stopped at epoch 30 by an early-stopping callback as shown below.<br><br>
-<img src="./asset/train_console_at_epoch_30.png" width="720" height="auto"><br>
+The training process has just been stopped at epoch 27 by an early-stopping callback as shown below.<br><br>
+<img src="./asset/train_console_at_epoch_27_0521.png" width="720" height="auto"><br>
 <br>
 The <b>val_accuracy</b> is very high as shown below from the beginning of the training.<br>
 <b>Train accuracies line graph</b>:<br>
-<img src="./asset/train_accuracies_30.png" width="720" height="auto"><br>
+<img src="./asset/train_metrics_27_0521.png" width="720" height="auto"><br>
 
 <br>
 The val_loss is also very low as shown below from the beginning of the training.<br>
 <b>Train losses line graph</b>:<br>
-<img src="./asset/train_losses_30.png" width="720" height="auto"><br>
+<img src="./asset/train_losses_27_0521.png" width="720" height="auto"><br>
 
 
 <h2>
@@ -180,7 +211,7 @@ Please run the following bat file.<br>
 >python TensorflowUNetBrainTumorEvaluator.py
 </pre>
 The evaluation result of this time is the following.<br>
-<img src="./asset/evaluate_console_at_epoch_30.png" width="720" height="auto"><br>
+<img src="./asset/evaluate_console_at_epoch_27_0521.png" width="720" height="auto"><br>
 <br>
 
 <h2>
@@ -209,7 +240,7 @@ Some green tumor regions in the original images of the mini_test dataset above h
 
 
 <h2>
-6 Train TensorflowUNet Model with dice_loss
+6 Train TensorflowUNet Model with basnet_hybrid_loss
 </h2>
 We have updated the functions to compute losses in <a href="./losses.py">losses.py</a>, based on 
 class <b>Semantic_loss_functions</b> in the web site <a href="https://github.com/shruti-jadon/Semantic-Segmentation-Loss-Functions">
@@ -217,18 +248,19 @@ Semantic-Segmentation-Loss-Functions (SemSegLoss)
 </a>
 
  We have trained Brain-Tumor TensorflowUNet Model by using the following
- <b>train_eval_infer_dice_loss.config</b> file. <br>
+ <b>train_eval_infer_basnet_hybrid_loss.config</b> file. <br>
 Please run the following bat file.<br>
 <pre>
 >4.train.bat
 </pre>
 , which simply runs the following command.<br>
 <pre> 
-python ./TensorflowUNetBrainTumorTrainer.py ./train_eval_infer_dice_loss.config
+python ./TensorflowUNetBrainTumorTrainer.py ./train_eval_infer_basnet_hybrid_loss.config
 </pre>
 <pre>
-; train_eval_infer_dice_losss.config
-; 2023/5/12 antillia.com
+; train_eval_infer_basnet_hybrid_loss.config
+; 2023/5/20 antillia.com
+
 [model]
 image_width    = 256
 image_height   = 256
@@ -237,8 +269,9 @@ num_classes    = 1
 base_filters   = 16
 num_layers     = 6
 dropout_rate   = 0.08
-dice_loss      = True
 learning_rate  = 0.001
+loss           = "basnet_hybrid_loss"
+metrics        = ["dice_coef", "sensitivity", "specificity"]
 show_summary   = False
 
 [train]
@@ -246,8 +279,8 @@ epochs        = 100
 batch_size    = 4
 patience      = 10
 metrics       = ["dice_coef", "val_dice_coef"]
-model_dir     = "./dice_loss_models"
-eval_dir      = "./dice_loss_eval"
+model_dir     = "./basnet_models"
+eval_dir      = "./basnet_eval"
 image_datapath = "./BrainTumor/train/image/"
 mask_datapath  = "./BrainTumor/train/mask/"
 
@@ -256,31 +289,32 @@ image_datapath = "./BrainTumor/test/image/"
 mask_datapath  = "./BrainTumor/test/mask/"
 
 [infer] 
-images_dir    = "./mini_test" 
-output_dir    = "./mini_test_output_dice_loss"
+images_dir     = "./mini_test" 
+output_dir     = "./basnet_mini_test_output"
 </pre>
 
-Since <b>dice_loss</b> is set to be <b>True</b> in <b>train_eval_infer_dice_loss.config</b> file,
-the following loss and metrics are used to compile our model as shown below.
+Since <pre>loss = "basnet_hybrid_loss"</pre> and <pre>metrics= ["dice_coef", "val_dice_coef"]</pre>
+are  in this configration file,
+the following loss and metrics functions are used to compile our model as shown below.
 <pre>
   self.loss    = basnet_hybrid_loss
   self.metrics = [dice_coef, sensitivity, specificity]
   self.model.compile(optimizer = self.optimizer, loss= self.loss, metrics = self.metrics)
 </pre>
 
-The training process has just been stopped at epoch 41 by an early-stopping callback as shown below.<br><br>
-<img src="./asset/train_dice_loss_console_at_epoch_41.png" width="720" height="auto"><br>
+The training process has just been stopped at epoch 29 by an early-stopping callback as shown below.<br><br>
+<img src="./asset/train_basnet_console_at_epoch_29_0521.png" width="720" height="auto"><br>
 <br>
-<b>Train metrics(dice_coef) line graph</b>:<br>
-<img src="./asset/train_dice_loss_metrics_41.png" width="720" height="auto"><br>
+<b>Train metrics (dice_coef) line graph</b>:<br>
+<img src="./asset/train_basnet_metrics_29_0512.png" width="720" height="auto"><br>
 
 <br>
-<b>Train losses line graph</b>:<br>
-<img src="./asset/train_dice_loss_losses_41.png" width="720" height="auto"><br>
+<b>Train losses (basnet_hybrid_loss)line graph</b>:<br>
+<img src="./asset/train_basnet_losses_29_0512.png" width="720" height="auto"><br>
 
 
 <h2>
-7 Evaluation by TensorflowUNet Model with dice_loss
+7 Evaluation by TensorflowUNet Model with basnet_hybrid_loss
 </h2>
  We have evaluated prediction accuracy of our Pretrained Brain-Tumor Model by using <b>test</b> dataset.<br>
 Please run the following bat file.<br>
@@ -289,32 +323,32 @@ Please run the following bat file.<br>
 </pre>
 , which simply runs the following command.<br>
 <pre> 
-python ./TensorflowUNetBrainTumorEvaluator.py ./train_eval_infer_dice_loss.config
+python ./TensorflowUNetBrainTumorEvaluator.py ./train_eval_infer_basnet_hybrid_loss.config
 </pre>
 The evaluation result of this time is the following.<br>
-<img src="./asset/evaluate_dice_loss_console_at_epoch_41.png" width="720" height="auto"><br>
+<img src="./asset/evaluate_basnet_console_at_epoch_29_0521.png" width="720" height="auto"><br>
 <br>
 
 
 <h2>
-8 Inference by TensorflowUNet Model with dice_loss
+8 Inference by TensorflowUNet Model with basnet_hybrid_loss
 </h2>
-We have also tried to infer the segmented region for <b>mini_test</b> dataset, which is the same mini_test dataset used in the case of <b>dice_loss=False</b>.<br>
+We have also tried to infer the segmented region for <b>mini_test</b> dataset, which is the same mini_test dataset used in the case of <b>basnet_hybrid_loss=False</b>.<br>
 Please run the following bat file.<br>
 <pre>
 >6.infer.bat
 </pre>
 , which simply runs the following command.<br>
 <pre> 
-python ./TensorflowUNetBrainTumorInfer.py ./train_eval_infer_dice_loss.config
+python ./TensorflowUNetBrainTumorInfer.py ./train_eval_infer_basnet_hybrid_loss.config
 </pre>
 
 <b>Input images (mini_test) </b><br>
 <img src="./asset/mini_test.png" width="1024" height="auto"><br>
 <br>
-<b>Infered images (mini_test_output_dice_loss)</b><br>
+<b>Infered images (mini_test_output_basnet_hybrid_loss)</b><br>
 Some green tumor regions in the original images of the mini_test dataset above have been detected as shown below.
-<img src="./asset/mini_test_output_dice_loss.png" width="1024" height="auto"><br><br>
+<img src="./asset/basnet_mini_test_output.png" width="1024" height="auto"><br><br>
 
 
 <h3>
