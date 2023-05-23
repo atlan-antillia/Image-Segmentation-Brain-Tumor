@@ -16,9 +16,11 @@
 # GrayImageWriter.py
 
 # 2023/05/05 to-arai
+# 2023/05/24 to-arai
 
 import os
 import cv2
+import numpy as np
 import traceback
 
 from PIL import Image
@@ -67,9 +69,14 @@ class GrayScaleImageWriter:
  
     print("== resized to {}".format(resized))
     image = image.resize(resized)
+    # image.putalpha(alpha=0)
     image.save(image_filepath)
+    image = image.convert("RGB")
     print("=== Saved {}". format(image_filepath))
-
+    # 2023/0524
+    #mask = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    return np.array(image)
+  
     
 if __name__ == "__main__":
   try:

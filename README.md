@@ -1,4 +1,4 @@
-# Image-Segmentation-Brain-Tumor (Updated: 2023/05/21)
+# Image-Segmentation-Brain-Tumor (Updated: 2023/05/24)
 <h2>
 1 Image-Segmentation-Brain-Tumor
 </h2>
@@ -44,10 +44,11 @@ U-Net: Convolutional Networks for Biomedical Image Segmentation
  https://arxiv.org/pdf/1505.04597.pdf
 </pre>
 <ul>
-    <li>2023/05/12: Modified TensorflowUNetModel to be compiled with basnet_hybrid_loss function. </li>
-    <li>2023/05/12: Trained, evaluated and inferred Brain-Tumor-TensorflowUNet-Model with basnet_hybrid_loss. </li>
-    <li>2023/05/21: Modified to read and eval <b>loss</b> and <b>metrics</b> functions from a configuration file. 
-</li>
+<li>2023/05/12: Modified TensorflowUNetModel to be compiled with basnet_hybrid_loss function. </li>
+<li>2023/05/12: Trained, evaluated and inferred Brain-Tumor-TensorflowUNet-Model with basnet_hybrid_loss. </li>
+<li>2023/05/21: Modified to read and eval <b>loss</b> and <b>metrics</b> functions from a configuration file. </li>
+<li>2023/05/24: Modified to write the merged (image+mask) inferred image files.</li>
+
 </ul>
 
 <br>
@@ -113,7 +114,7 @@ Please run the following bat file.<br>
 
 <pre>
 ; train_eval_infer.config
-; 2023/5/20 antillia.com
+; 2023/5/24 antillia.com
 ; Modified to use loss and metric
 ; Specify loss as a function nams
 ; loss =  "binary_crossentropy"
@@ -154,6 +155,8 @@ mask_datapath  = "./BrainTumor/test/mask/"
 [infer] 
 images_dir    = "./mini_test" 
 output_dir    = "./mini_test_output"
+merged_dir    = "./mini_test_output_merged"
+
 </pre>
 
 Since <pre>loss = "binary_crossentropy"</pre> and <pre>metrics = ["binary_accuracy"] </pre> are specified 
@@ -232,7 +235,10 @@ We have also tried to infer the segmented region for <b>mini_test</b> dataset, w
 <br>
 <b>Infered images (mini_test_output)</b><br>
 Some green tumor regions in the original images of the mini_test dataset above have been detected as shown below.
-<img src="./asset/mini_test_output.png" width="1024" height="auto"><br><br>
+<img src="./asset/mini_test_output.png" width="1024" height="auto"><br>
+<br>
+<b>Merged inferred images</b><br>
+<img src="./asset/mini_test_output_merged.png" width="1024" height="auto"><br><br>
 
 <br>
 <!--
@@ -346,7 +352,7 @@ python ./TensorflowUNetBrainTumorInfer.py ./train_eval_infer_basnet_hybrid_loss.
 <b>Input images (mini_test) </b><br>
 <img src="./asset/mini_test.png" width="1024" height="auto"><br>
 <br>
-<b>Infered images (mini_test_output_basnet_hybrid_loss)</b><br>
+<b>Inferred images (mini_test_output_basnet_hybrid_loss)</b><br>
 Some green tumor regions in the original images of the mini_test dataset above have been detected as shown below.
 <img src="./asset/basnet_mini_test_output.png" width="1024" height="auto"><br><br>
 

@@ -87,6 +87,7 @@ See also: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python
 
 MODEL  = "model"
 TRAIN  = "train"
+INFER  = "infer"
 BEST_MODEL_FILE = "best_model.h5"
 
 class TensorflowUNet:
@@ -252,6 +253,16 @@ class TensorflowUNet:
 
     width        = self.config.get(MODEL, "image_width")
     height       = self.config.get(MODEL, "image_height")
+    # 2023/05/24
+    merged_dir   = None
+    try:
+      merged_dir = self.config.get(INFER, "merged_dir")
+      if os.path.exists(merged_dir):
+        shutil.rmtree(merged_dir)
+      if not os.path.exists(merged_dir):
+        os.makedirs(merged_dir)
+    except:
+      pass
 
     for image_file in image_files:
       basename = os.path.basename(image_file)
@@ -266,8 +277,15 @@ class TensorflowUNet:
       image       = prediction[0]    
       # Resize the predicted image to be the original image size (w, h), and save it as a grayscale image.
       # Probably, this is a natural way for all humans. 
-      writer.save_resized(image, (w, h), output_dir, name)
-
+      mask = writer.save_resized(image, (w, h), output_dir, name)
+      # 2023/05/24
+      print("--- image_file {}".format(image_file))
+      if merged_dir !=None:
+        # Resize img to the original size (w, h)
+        img   = cv2.resize(img, (w, h))
+        img += mask
+        merged_file = os.path.join(merged_dir, basename)
+        cv2.imwrite(merged_file, img)
 
   def predict(self, images, expand=True):
     self.load_model()
