@@ -74,6 +74,7 @@ from EpochChangeCallback import EpochChangeCallback
 from GrayScaleImageWriter import GrayScaleImageWriter
 
 from losses import dice_coef, basnet_hybrid_loss, sensitivity, specificity
+from losses import iou_coef, iou_loss, bce_iou_loss
 
 """
 See: https://www.tensorflow.org/api_docs/python/tf/keras/metrics

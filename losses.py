@@ -1,6 +1,7 @@
 # Antillia.com Toshiyuki Arai
 # 2023/05/12
-
+# 2023/05/30 Modified return value of basnet_hybrid_loss.
+#
 # losses.py
 #
 # These functions have been taken from the following web site.
@@ -59,6 +60,7 @@ model.compile(optimizer = Adam(lr=1e-3),
               or
               #metrics   = [dice_coef, sensitivity, specificity]
               )
+
 """
 import tensorflow as tf
 import tensorflow.keras.backend as K
@@ -108,10 +110,17 @@ def jacard_similarity(y_true, y_pred):
     union = K.sum((y_true_f + y_pred_f) - (y_true_f * y_pred_f))
     return intersection / union
 
+
 def jacard_loss(y_true, y_pred):
     """
     Intersection-Over-Union (IoU), also known as the Jaccard loss
     """
+    return 1 - jacard_similarity(y_true, y_pred)
+
+def iou_coef(y_true, y_pred):
+    return jacard_similarity(y_true, y_pred)
+
+def iou_loss(y_true, y_pred):
     return 1 - jacard_similarity(y_true, y_pred)
 
 def ssim_loss(y_true, y_pred):
@@ -122,6 +131,16 @@ def ssim_loss(y_true, y_pred):
     y_pred_f = K.cast(y_pred, 'float32')
 
     return 1 - tf.image.ssim(y_true_f, y_pred_f, max_val=1)
+
+def bce_iou_loss(y_true, y_pred):
+    bce_loss = BinaryCrossentropy(from_logits=False)
+    bce_loss = bce_loss(y_true, y_pred)
+
+    jac_loss     = jacard_loss(y_true, y_pred)
+
+    loss = bce_loss + jac_loss
+    return loss/2.0
+
 
 def basnet_hybrid_loss(y_true, y_pred):
     """
@@ -136,4 +155,15 @@ def basnet_hybrid_loss(y_true, y_pred):
     ms_ssim_loss = ssim_loss(y_true, y_pred)
     jac_loss     = jacard_loss(y_true, y_pred)
 
-    return bce_loss + ms_ssim_loss + jac_loss
+    loss = bce_loss + ms_ssim_loss + jac_loss
+    # 2023/05/30
+    return loss/3.0
+
+# 2023/06/07 
+def bce_iou_loss(y_true, y_pred):
+    bce_loss = BinaryCrossentropy(from_logits=False)
+    loss1 = bce_loss(y_true, y_pred)
+    loss2 = iou_loss(y_true, y_pred)
+
+    loss = loss1 + loss2
+    return loss/2.0

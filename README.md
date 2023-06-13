@@ -1,4 +1,4 @@
-# Image-Segmentation-Brain-Tumor (Updated: 2023/05/24)
+# Image-Segmentation-Brain-Tumor (Updated: 2023/06/14)
 <h2>
 1 Image-Segmentation-Brain-Tumor
 </h2>
@@ -48,6 +48,9 @@ U-Net: Convolutional Networks for Biomedical Image Segmentation
 <li>2023/05/12: Trained, evaluated and inferred Brain-Tumor-TensorflowUNet-Model with basnet_hybrid_loss. </li>
 <li>2023/05/21: Modified to read and eval <b>loss</b> and <b>metrics</b> functions from a configuration file. </li>
 <li>2023/05/24: Modified to write the merged (image+mask) inferred image files.</li>
+<li>2023/05/24: Modified to write the merged (image+mask) inferred image files.</li>
+<li>2023/06/14: Created ./projects/Brain-Tumor folder.</li>
+<li>2023/06/14: Modified to use ImageMaskDataset instead of BrainTumorDatset.</li>
 
 </ul>
 
@@ -86,7 +89,7 @@ as show below.<br>
 2.2 Split master dataset
 </h3>
 We have split Brain-Tumor dataset to <b>train</b> and <b>test</b> dataset 
-by using Python <a href="./split_master.py">split_master.py</a> script.
+by using Python <a href="./projects/Brain-Tumor/split_master.py">split_master.py</a> script.
 <pre>
 BrainTumor
 ├─test
@@ -109,12 +112,11 @@ Please run the following bat file.<br>
 </pre>
 , which simply runs the following command.<br>
 <pre>
->python TensorflowUNetBrainTumorTrainer.py
+>python ../../TensorflowUNetTrainer.py train_eval_infer.config
 </pre>
-
 <pre>
 ; train_eval_infer.config
-; 2023/5/24 antillia.com
+; 2023/6/13 antillia.com
 ; Modified to use loss and metric
 ; Specify loss as a function nams
 ; loss =  "binary_crossentropy"
@@ -132,7 +134,9 @@ num_layers     = 6
 dropout_rate   = 0.08
 learning_rate  = 0.001
 
+;loss           = "bce_iou_loss"
 loss           = "binary_crossentropy"
+
 metrics        = ["binary_accuracy"]
 show_summary   = False
 
@@ -141,10 +145,8 @@ epochs        = 100
 batch_size    = 4
 patience      = 10
 metrics       = ["binary_accuracy", "val_binary_accuracy"]
-
 model_dir     = "./models"
 eval_dir      = "./eval"
-
 image_datapath = "./BrainTumor/train/image/"
 mask_datapath  = "./BrainTumor/train/mask/"
 
@@ -157,6 +159,10 @@ images_dir    = "./mini_test"
 output_dir    = "./mini_test_output"
 merged_dir    = "./mini_test_output_merged"
 
+[mask]
+blur      = True
+binarize  = True
+threshold = 80
 </pre>
 
 Since <pre>loss = "binary_crossentropy"</pre> and <pre>metrics = ["binary_accuracy"] </pre> are specified 
@@ -188,17 +194,17 @@ On detail of these functions, please refer to <a href="./losses.py">losses.py</a
 We have also used Python <a href="./BrainTumorDataset.py">BrainTumorDataset.py</a> script to create
 train and test dataset from the original and segmented images specified by
 <b>image_datapath</b> and <b>mask_datapath </b> parameters in the configratration file.<br>
-The training process has just been stopped at epoch 27 by an early-stopping callback as shown below.<br><br>
-<img src="./asset/train_console_at_epoch_27_0521.png" width="720" height="auto"><br>
+The training process has just been stopped at epoch 36 by an early-stopping callback as shown below.<br><br>
+<img src="./asset/train_console_at_epoch_36_0613.png" width="720" height="auto"><br>
 <br>
 The <b>val_accuracy</b> is very high as shown below from the beginning of the training.<br>
 <b>Train accuracies line graph</b>:<br>
-<img src="./asset/train_metrics_27_0521.png" width="720" height="auto"><br>
+<img src="./asset/train_metrics_36_0613.png" width="720" height="auto"><br>
 
 <br>
 The val_loss is also very low as shown below from the beginning of the training.<br>
 <b>Train losses line graph</b>:<br>
-<img src="./asset/train_losses_27_0521.png" width="720" height="auto"><br>
+<img src="./asset/train_losses_36_0613.png" width="720" height="auto"><br>
 
 
 <h2>
@@ -211,10 +217,10 @@ Please run the following bat file.<br>
 </pre>
 , which simply run the following command.<br>
 <pre>
->python TensorflowUNetBrainTumorEvaluator.py
+>python ../../TensorflowUNetEvaluator.py train_eval_infer.config
 </pre>
 The evaluation result of this time is the following.<br>
-<img src="./asset/evaluate_console_at_epoch_27_0521.png" width="720" height="auto"><br>
+<img src="./asset/evaluate_console_at_epoch_36_0613.png" width="720" height="auto"><br>
 <br>
 
 <h2>
@@ -227,7 +233,7 @@ We have also tried to infer the segmented region for <b>mini_test</b> dataset, w
 </pre>
 , which simply runs the following command.<br>
 <pre>
->python TensorflowUNetBrainTumorInfer.py
+>python ../../TensorflowUNetInferencer.py train_eval_infer.config
 </pre>
 
 <b>Input images (mini_test) </b><br>
@@ -261,43 +267,9 @@ Please run the following bat file.<br>
 </pre>
 , which simply runs the following command.<br>
 <pre> 
-python ./TensorflowUNetBrainTumorTrainer.py ./train_eval_infer_basnet_hybrid_loss.config
+>python ../../TensorflowUNetTrainer.py ./train_eval_infer_basnet_hybrid_loss.config
 </pre>
-<pre>
-; train_eval_infer_basnet_hybrid_loss.config
-; 2023/5/20 antillia.com
 
-[model]
-image_width    = 256
-image_height   = 256
-image_channels = 3
-num_classes    = 1
-base_filters   = 16
-num_layers     = 6
-dropout_rate   = 0.08
-learning_rate  = 0.001
-loss           = "basnet_hybrid_loss"
-metrics        = ["dice_coef", "sensitivity", "specificity"]
-show_summary   = False
-
-[train]
-epochs        = 100
-batch_size    = 4
-patience      = 10
-metrics       = ["dice_coef", "val_dice_coef"]
-model_dir     = "./basnet_models"
-eval_dir      = "./basnet_eval"
-image_datapath = "./BrainTumor/train/image/"
-mask_datapath  = "./BrainTumor/train/mask/"
-
-[eval]
-image_datapath = "./BrainTumor/test/image/"
-mask_datapath  = "./BrainTumor/test/mask/"
-
-[infer] 
-images_dir     = "./mini_test" 
-output_dir     = "./basnet_mini_test_output"
-</pre>
 
 Since <pre>loss = "basnet_hybrid_loss"</pre> and <pre>metrics= ["dice_coef", "val_dice_coef"]</pre>
 are  in this configration file,
@@ -309,14 +281,14 @@ the following loss and metrics functions are used to compile our model as shown 
 </pre>
 
 The training process has just been stopped at epoch 29 by an early-stopping callback as shown below.<br><br>
-<img src="./asset/train_basnet_console_at_epoch_29_0521.png" width="720" height="auto"><br>
+<img src="./asset/train_basnet_console_at_epoch_47_0613.png" width="720" height="auto"><br>
 <br>
 <b>Train metrics (dice_coef) line graph</b>:<br>
-<img src="./asset/train_basnet_metrics_29_0512.png" width="720" height="auto"><br>
+<img src="./asset/train_basnet_metrics_47_0613.png" width="720" height="auto"><br>
 
 <br>
 <b>Train losses (basnet_hybrid_loss)line graph</b>:<br>
-<img src="./asset/train_basnet_losses_29_0512.png" width="720" height="auto"><br>
+<img src="./asset/train_basnet_losses_47_0613.png" width="720" height="auto"><br>
 
 
 <h2>
@@ -329,10 +301,10 @@ Please run the following bat file.<br>
 </pre>
 , which simply runs the following command.<br>
 <pre> 
-python ./TensorflowUNetBrainTumorEvaluator.py ./train_eval_infer_basnet_hybrid_loss.config
+python ../../TensorflowUNetEvaluator.py ./train_eval_infer_basnet_hybrid_loss.config
 </pre>
 The evaluation result of this time is the following.<br>
-<img src="./asset/evaluate_basnet_console_at_epoch_29_0521.png" width="720" height="auto"><br>
+<img src="./asset/evaluate_basnet_console_at_epoch_43_0613.png" width="720" height="auto"><br>
 <br>
 
 
@@ -346,7 +318,7 @@ Please run the following bat file.<br>
 </pre>
 , which simply runs the following command.<br>
 <pre> 
-python ./TensorflowUNetBrainTumorInfer.py ./train_eval_infer_basnet_hybrid_loss.config
+python ../../TensorflowUNetInferencer.py ./train_eval_infer_basnet_hybrid_loss.config
 </pre>
 
 <b>Input images (mini_test) </b><br>
@@ -356,6 +328,8 @@ python ./TensorflowUNetBrainTumorInfer.py ./train_eval_infer_basnet_hybrid_loss.
 Some green tumor regions in the original images of the mini_test dataset above have been detected as shown below.
 <img src="./asset/basnet_mini_test_output.png" width="1024" height="auto"><br><br>
 
+<b>Merged Inferred images (mini_test_output_basnet_hybrid_loss)</b><br>
+<img src="./asset/basnet_mini_test_output_merged.png" width="1024" height="auto"><br><br>
 
 <h3>
 References
